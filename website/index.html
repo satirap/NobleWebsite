@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Noble Co., Ltd. — IT System Integration · ระบบไอทีครบวงจร</title>
+<meta name="description" content="The Noble คือผู้เชี่ยวชาญด้าน System Integration ครบวงจร — คอมพิวเตอร์ เครือข่าย กล้องวงจรปิด ระบบควบคุมการเข้าออก และ IT Support ประจำ Site" />
+<meta property="og:title" content="The Noble Co., Ltd. — IT System Integration" />
+<meta property="og:description" content="Full-service IT System Integration — computers, networks, CCTV, access control and on-site IT support." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="./assets/logo-noble-master.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="The Noble Co., Ltd. — IT System Integration" />
+<meta name="twitter:description" content="Full-service IT System Integration — computers, networks, CCTV, access control and on-site IT support." />
+<link rel="icon" type="image/png" href="./assets/logo-noble-mark.png" />
+<link rel="stylesheet" href="./styles.css" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="./_ds_bundle.js"></script>
+<script src="./js/content.js"></script>
+<script src="./js/photos.js"></script>
+<script src="./js/store.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; overflow-x: hidden; }
+  body { font-family: var(--font-body); color: var(--text-body); background: var(--surface-card); }
+
+  /* Loading spinner */
+  #noble-loading {
+    position: fixed; inset: 0; z-index: 999;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--surface-card, #fff);
+    transition: opacity 0.3s ease;
+  }
+  #noble-loading.hidden { opacity: 0; pointer-events: none; }
+  .noble-spinner {
+    width: 44px; height: 44px;
+    border: 3px solid rgba(26,114,214,0.2);
+    border-top-color: #1a72d6;
+    border-radius: 50%;
+    animation: noble-spin 0.8s linear infinite;
+  }
+  @keyframes noble-spin { to { transform: rotate(360deg); } }
+
+  /* Responsive layout overrides */
+  @media (max-width: 900px) {
+    .noble-hero-grid { grid-template-columns: 1fr !important; }
+    .noble-noc { display: none !important; }
+    .noble-nav { display: none !important; }
+    .noble-why-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  }
+  @media (max-width: 768px) {
+    .noble-services-grid { grid-template-columns: 1fr !important; }
+    .noble-showcase-grid { grid-template-columns: 1fr !important; }
+    .noble-works-grid { grid-template-columns: 1fr !important; }
+    .noble-contact-grid { grid-template-columns: 1fr !important; }
+    .noble-footer-grid { grid-template-columns: 1fr !important; }
+    .noble-why-grid { grid-template-columns: 1fr !important; }
+  }
+</style>
+</head>
+<body>
+<div id="noble-loading"><div class="noble-spinner"></div></div>
+<div id="app"></div>
+
+<!-- ==================== Header ==================== -->
+<script type="text/babel" data-presets="react">
+// The Noble — site Header (glass, sticky) with dropdown submenus + LINE button
+function NobleHeader({ lang, setLang, go, data }) {
+  const { Button } = window.TheNobleDesignSystem_288042;
+  const C = window.NobleContent;
+  const Ico = ({ n, s = 14 }) => React.createElement(window.NobleIco, { n, s });
+  const [scrolled, setScrolled] = React.useState(false);
+  const [openIdx, setOpenIdx] = React.useState(null);
+  React.useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const t = (th, en) => (lang === "th" ? th : en);
+  const menu = [
+    { label: t("หน้าแรก", "Home"), go: "home" },
+    {
+      label: t("บริการของเรา", "Services"), go: "services",
+      sub: data.services.map((s) => ({ label: s.title[lang], go: "services" })),
+    },
+    {
+      label: t("ผลงานและลูกค้า", "Work & Clients"), go: "portfolio",
+      sub: [
+        { label: t("ผลงานที่ผ่านมา", "Recent work"), go: "portfolio" },
+        ...data.clients.works.slice(0, 6).map((w) => ({ label: w.title[lang], go: "portfolio", dim: true })),
+        { label: t("ลูกค้าอ้างอิง", "Trusted by"), go: "portfolio" },
+      ],
+    },
+    { label: t("เกี่ยวกับเรา", "About"), go: "about" },
+    { label: t("ติดต่อเรา", "Contact"), go: "contact" },
+  ];
+
+  const navItem = {
+    display: "inline-flex", alignItems: "center", gap: 5, padding: "8px 13px",
+    fontFamily: "var(--font-body)", fontWeight: 500, fontSize: 15, color: "var(--text-body)",
+    cursor: "pointer", borderRadius: "var(--radius-sm)", whiteSpace: "nowrap",
+    transition: "color var(--duration-fast), background var(--duration-fast)",
+  };
+
+  return (
+    <React.Fragment>
+      <header style={{
+        position: "sticky", top: 0, zIndex: 50,
+        background: scrolled ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.6)",
+        backdropFilter: "var(--blur-glass)", WebkitBackdropFilter: "var(--blur-glass)",
+        borderBottom: `1px solid ${scrolled ? "var(--border-subtle)" : "transparent"}`,
+        transition: "all var(--duration-base) var(--ease-out)",
+      }}>
+        <div style={{ maxWidth: "var(--container-wide)", margin: "0 auto", padding: "0 var(--container-pad)", height: 72, display: "flex", alignItems: "center", gap: 20 }}>
+          <a onClick={() => go("home")} style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", flex: "none" }}>
+            <img src="./assets/logo-noble-mark.png" alt="The Noble" style={{ height: 38 }} />
+            <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 19, letterSpacing: "0.06em", color: "var(--primary)" }}>{data.brand.name}</span>
+          </a>
+
+          <nav className="noble-nav" style={{ display: "flex", gap: 2, marginLeft: 12, flex: 1 }}>
+            {menu.map((m, i) => {
+              const active = openIdx === i;
+              return (
+                <div key={i} style={{ position: "relative" }} onMouseEnter={() => setOpenIdx(m.sub ? i : null)} onMouseLeave={() => setOpenIdx(null)}>
+                  <a onClick={() => go(m.go)} style={{ ...navItem, color: active ? "var(--primary)" : "var(--text-body)", background: active ? "var(--blue-50)" : "transparent" }}>
+                    {m.label}{m.sub && <Ico n="chevron-down" s={14} />}
+                  </a>
+                  {m.sub && active && (
+                    <div style={{ position: "absolute", top: "100%", left: 0, paddingTop: 8 }}>
+                      <div style={{ minWidth: 244, background: "var(--surface-card)", borderRadius: "var(--radius-md)", boxShadow: "var(--shadow-lg)", border: "1px solid var(--border-subtle)", padding: 8, display: "flex", flexDirection: "column", gap: 1 }}>
+                        {m.sub.map((s, j) => (
+                          <a key={j} onClick={() => { go(s.go); setOpenIdx(null); }} style={{
+                            display: "flex", alignItems: "center", gap: 9, padding: "9px 12px", borderRadius: "var(--radius-sm)", cursor: "pointer",
+                            fontFamily: "var(--font-body)", fontSize: 14, fontWeight: s.dim ? 400 : 500,
+                            color: s.dim ? "var(--text-muted)" : "var(--text-strong)",
+                          }}
+                            onMouseEnter={(e) => { e.currentTarget.style.background = "var(--blue-50)"; e.currentTarget.style.color = "var(--primary)"; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = s.dim ? "var(--text-muted)" : "var(--text-strong)"; }}
+                          >
+                            <span style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--accent)", flex: "none", opacity: s.dim ? 0.45 : 1 }}></span>
+                            {s.label}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </nav>
+
+          <div style={{ display: "flex", alignItems: "center", gap: 12, flex: "none" }}>
+            <div style={{ display: "flex", fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 600, border: "1px solid var(--border-default)", borderRadius: "var(--radius-pill)", overflow: "hidden" }}>
+              {["th", "en"].map((l) => (
+                <button key={l} onClick={() => setLang(l)} style={{ padding: "5px 11px", border: "none", cursor: "pointer", textTransform: "uppercase", background: lang === l ? "var(--primary)" : "transparent", color: lang === l ? "#fff" : "var(--text-muted)" }}>{l}</button>
+              ))}
+            </div>
+            <a style={{ fontSize: 14, fontWeight: 500, color: "var(--text-muted)", cursor: "pointer", whiteSpace: "nowrap" }}>{C.login[lang]}</a>
+            <Button size="sm" variant="primary" onClick={() => go("contact")}>{C.quote[lang]}</Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Floating LINE contact button (bottom-right) */}
+      <a href="https://line.me/ti/p/@thenoble" target="_blank" rel="noopener" title={lang === "th" ? "สอบถามทาง LINE @thenoble" : "Chat on LINE @thenoble"}
+        style={{ position: "fixed", right: 22, bottom: 22, zIndex: 93, width: 60, height: 60, borderRadius: "50%", background: "#06C755", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 10px 26px rgba(6,199,85,0.45)", textDecoration: "none", color: "#fff", transition: "transform var(--duration-base) var(--ease-out)" }}
+        onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-3px) scale(1.05)"; }}
+        onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; }}>
+        <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 15, letterSpacing: "0.02em", lineHeight: 1 }}>LINE</span>
+      </a>
+    </React.Fragment>
+  );
+}
+window.NobleHeader = NobleHeader;
+</script>
+
+<!-- ==================== Hero ==================== -->
+<script type="text/babel" data-presets="react">
+// The Noble — Hero with glow + dashboard mock
+function NobleHero({ lang, go, data }) {
+  const { Button, StatBlock } = window.TheNobleDesignSystem_288042;
+  const H = data.hero;
+  const Ico = ({ n, s = 18 }) => React.createElement(window.NobleIco, { n, s });
+
+  return (
+    <section id="home" style={{ position: "relative", overflow: "hidden", background: "var(--ink-900)" }}>
+      {/* photographic backdrop */}
+      <div style={{ position: "absolute", inset: 0, backgroundImage: `url(${H.image})`, backgroundSize: "cover", backgroundPosition: "center", opacity: 0.18 }}></div>
+      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,18,32,0.6) 0%, rgba(11,18,32,0.82) 60%, var(--ink-900) 100%)" }}></div>
+      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(70% 90% at 70% -10%, rgba(26,114,214,0.35) 0%, rgba(26,114,214,0) 60%)" }}></div>
+      <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)", backgroundSize: "44px 44px", maskImage: "radial-gradient(80% 80% at 50% 0%, #000 30%, transparent 75%)" }}></div>
+      <div className="noble-hero-grid" style={{ position: "relative", maxWidth: "var(--container-wide)", margin: "0 auto", padding: "clamp(3.5rem,7vw,6rem) var(--container-pad)", display: "grid", gridTemplateColumns: "1.05fr 0.95fr", gap: 48, alignItems: "center" }}>
+        <div>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 14px 6px 8px", borderRadius: "var(--radius-pill)", background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)", color: "#fff", fontSize: 13, fontWeight: 500, marginBottom: 22 }}>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "2px 9px", borderRadius: "var(--radius-pill)", background: "var(--gradient-signal)", fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 11, letterSpacing: "0.04em" }}>NEW</span>
+            {H.eyebrow}
+          </span>
+          <h1 style={{ margin: "0 0 20px", fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "var(--text-display-xl)", lineHeight: 1.08, letterSpacing: "-0.02em", color: "#fff", whiteSpace: "pre-line" }}>
+            {H.title[lang]}
+          </h1>
+          <p style={{ margin: "0 0 30px", fontSize: "var(--text-lg)", lineHeight: 1.65, color: "var(--ink-300)", maxWidth: 540 }}>
+            {H.sub[lang]}
+          </p>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+            <Button size="lg" variant="primary" rightIcon={<Ico n="arrow-right" />} onClick={() => go("services")}>{H.cta1[lang]}</Button>
+            <Button size="lg" variant="secondary" leftIcon={<Ico n="phone" />} onClick={() => go("contact")} style={{ background: "rgba(255,255,255,0.06)", color: "#fff", borderColor: "rgba(255,255,255,0.22)" }}>{H.cta2[lang]}</Button>
+          </div>
+          <div style={{ display: "flex", gap: 36, marginTop: 40, flexWrap: "wrap" }}>
+            {data.stats.slice(0, 3).map((s, i) => <StatBlock key={i} value={s.value} label={s.label[lang]} tone="light" />)}
+          </div>
+        </div>
+
+        {/* NOC monitor mock */}
+        <div className="noble-noc" style={{ position: "relative" }}>
+          <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "var(--radius-xl)", padding: 18, boxShadow: "0 30px 80px rgba(0,0,0,0.45)", backdropFilter: "blur(6px)" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, color: "#fff", fontFamily: "var(--font-mono)", fontSize: 12 }}>
+                <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--success-600)", boxShadow: "0 0 8px var(--success-600)" }}></span>
+                noble-noc · live
+              </div>
+              <div style={{ display: "flex", gap: 6 }}>{[0,1,2].map(i => <span key={i} style={{ width: 8, height: 8, borderRadius: "50%", background: "rgba(255,255,255,0.2)" }}></span>)}</div>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              {[
+                { n: "server", k: "Servers", v: "42 / 42", t: "var(--success-600)", s: "all healthy" },
+                { n: "network", k: "Network", v: "1.2 Gbps", t: "var(--blue-400)", s: "throughput" },
+                { n: "cctv", k: "CCTV", v: "128 cams", t: "var(--success-600)", s: "recording" },
+                { n: "shield-check", k: "MA tickets", v: "3 open", t: "var(--warning-600)", s: "< 4h SLA" },
+              ].map((m, i) => (
+                <div key={i} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "var(--radius-md)", padding: 14 }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", color: "var(--ink-300)", fontSize: 12, marginBottom: 10 }}>
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Ico n={m.n} s={14} />{m.k}</span>
+                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: m.t }}></span>
+                  </div>
+                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 20, fontWeight: 600, color: "#fff" }}>{m.v}</div>
+                  <div style={{ fontSize: 11, color: "var(--ink-400)" }}>{m.s}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ marginTop: 12, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "var(--radius-md)", padding: "12px 14px", display: "flex", alignItems: "flex-end", gap: 5, height: 64 }}>
+              {[40,55,48,62,58,72,66,80,75,88,82,95,90,70,84].map((h, i) => (
+                <span key={i} style={{ flex: 1, height: h + "%", borderRadius: 2, background: "linear-gradient(var(--blue-400), var(--blue-700))" }}></span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+window.NobleHero = NobleHero;
+</script>
+
+<!-- ==================== Sections ==================== -->
+<script type="text/babel" data-presets="react">
+// The Noble — Services grid + Showcase + Why-us + CTA band
+function NobleSections({ lang, go, data }) {
+  const { SectionHeading, ServiceCard, StatBlock, Button } = window.TheNobleDesignSystem_288042;
+  const C = window.NobleContent;
+  const Ico = ({ n, s = 24 }) => React.createElement(window.NobleIco, { n, s });
+  const wrap = { maxWidth: "var(--container-wide)", margin: "0 auto", padding: "0 var(--container-pad)" };
+  const SH = data.servicesHead, SC = data.showcase;
+
+  return (
+    <React.Fragment>
+      {/* Services */}
+      <section id="services" style={{ position: "relative", overflow: "hidden", background: "var(--surface-page)", padding: "var(--section-gap) 0" }}>
+        <div style={{ ...wrap, position: "relative" }}>
+          <SectionHeading align="center" eyebrow={SH.eyebrow[lang]} title={SH.title[lang]} description={SH.sub[lang]} />
+          <div className="noble-services-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, marginTop: 48 }}>
+            {data.services.map((s, i) => (
+              <ServiceCard key={i} icon={<Ico n={s.icon} />} image={s.image} title={s.title[lang]} description={s.desc[lang]} cta={lang === "th" ? "ดูรายละเอียด" : "Learn more"} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Showcase — real imagery + proof */}
+      <section style={{ background: "var(--surface-card)", padding: "var(--section-gap) 0" }}>
+        <div className="noble-showcase-grid" style={{ ...wrap, display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 48, alignItems: "center" }}>
+          <div style={{ position: "relative" }}>
+            <div style={{ borderRadius: "var(--radius-xl)", overflow: "hidden", boxShadow: "var(--shadow-xl)", aspectRatio: "4 / 3" }}>
+              <img src={SC.image1} alt="The Noble engineers on site" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+            </div>
+            <div style={{ position: "absolute", right: -18, bottom: -18, width: 150, borderRadius: "var(--radius-lg)", overflow: "hidden", border: "5px solid var(--surface-card)", boxShadow: "var(--shadow-lg)", aspectRatio: "1 / 1" }}>
+              <img src={SC.image2} alt="Data center aisle" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+            </div>
+          </div>
+          <div>
+            <SectionHeading eyebrow={SC.eyebrow[lang]} title={SC.title[lang]} description={SC.desc[lang]} />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginTop: 32 }}>
+              {data.stats.map((s, i) => <StatBlock key={i} value={s.value} label={s.label[lang]} />)}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why us — dark band */}
+      <section id="about" style={{ position: "relative", overflow: "hidden", background: "var(--ink-900)", padding: "var(--section-gap) 0" }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(60% 70% at 15% 0%, rgba(26,114,214,0.28) 0%, rgba(26,114,214,0) 60%)" }}></div>
+        <div style={{ ...wrap, position: "relative" }}>
+          <SectionHeading align="center" eyebrow={C.whyHead.eyebrow[lang]} title={<span style={{ color: "#fff" }}>{C.whyHead.title[lang]}</span>} />
+          <div className="noble-why-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 18, marginTop: 48 }}>
+            {C.why.map((w, i) => (
+              <div key={i} style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "var(--radius-lg)", padding: 26 }}>
+                <div style={{ width: 48, height: 48, borderRadius: "var(--radius-md)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", background: "var(--gradient-brand)", marginBottom: 18, boxShadow: "var(--shadow-glow-blue)" }}>
+                  <Ico n={w.icon} s={22} />
+                </div>
+                <h3 style={{ margin: "0 0 8px", fontFamily: "var(--font-display)", fontSize: 18, fontWeight: 600, color: "#fff" }}>{w.title[lang]}</h3>
+                <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "var(--ink-300)" }}>{w.desc[lang]}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </React.Fragment>
+  );
+}
+window.NobleSections = NobleSections;
+</script>
+
+<!-- ==================== Clients ==================== -->
+<script type="text/babel" data-presets="react">
+// The Noble — Clients & Works (ผลงาน / ลูกค้าอ้างอิง) + closing CTA band.
+function NobleClients({ lang, go, data }) {
+  const { SectionHeading, Button, Badge } = window.TheNobleDesignSystem_288042;
+  const C = window.NobleContent;
+  const CL = data.clients;
+  const Ico = ({ n, s = 18 }) => React.createElement(window.NobleIco, { n, s });
+  const wrap = { maxWidth: "var(--container-wide)", margin: "0 auto", padding: "0 var(--container-pad)" };
+
+  const groups = [
+    { key: "gov", label: { th: "ภาครัฐ", en: "Public sector" } },
+    { key: "private", label: { th: "ภาคเอกชน", en: "Private sector" } },
+    { key: "partner", label: { th: "พันธมิตรเทคโนโลยี", en: "Technology partners" } },
+  ];
+  const initials = (n) => n.replace(/[^A-Za-zก-ฮ0-9 ]/g, "").trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase() || "•";
+
+  const ProjectCard = ({ w }) => {
+    const [hov, setHov] = React.useState(false);
+    return (
+      <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+        style={{ background: "var(--surface-card)", borderRadius: "var(--radius-lg)", overflow: "hidden", boxShadow: hov ? "var(--shadow-lg)" : "var(--shadow-sm), var(--ring-hairline)", transform: hov ? "translateY(-3px)" : "none", transition: "all var(--duration-base) var(--ease-out)", display: "flex", flexDirection: "column" }}>
+        <div style={{ position: "relative", aspectRatio: "16 / 10", overflow: "hidden" }}>
+          <img src={w.image} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transform: hov ? "scale(1.06)" : "scale(1)", transition: "transform var(--duration-slow) var(--ease-out)" }} />
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,18,32,0) 45%, rgba(11,18,32,0.5) 100%)" }}></div>
+          <span style={{ position: "absolute", top: 12, left: 12 }}><Badge tone="brand" variant="solid" size="sm">{w.category[lang]}</Badge></span>
+        </div>
+        <div style={{ padding: "16px 18px 18px" }}>
+          <h3 style={{ margin: "0 0 6px", fontFamily: "var(--font-display)", fontSize: 17, fontWeight: 600, color: "var(--text-strong)", letterSpacing: "var(--tracking-tight)" }}>{w.title[lang]}</h3>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "var(--text-muted)" }}><Ico n="map-pin" s={14} />{w.location[lang]}</div>
+        </div>
+      </div>
+    );
+  };
+
+  const Tile = ({ c }) => {
+    const [hov, setHov] = React.useState(false);
+    return (
+      <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+        style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, minWidth: 150, height: 80, padding: "0 22px",
+          background: "var(--surface-card)", borderRadius: "var(--radius-md)", boxShadow: hov ? "var(--shadow-md)" : "var(--shadow-sm), var(--ring-hairline)",
+          transform: hov ? "translateY(-2px)" : "none", transition: "all var(--duration-base) var(--ease-out)" }}>
+        {c.logo ? (
+          <img src={c.logo} alt={c.name} style={{ maxHeight: 44, maxWidth: 130, objectFit: "contain", filter: hov ? "none" : "grayscale(1)", opacity: hov ? 1 : 0.85, transition: "all var(--duration-base) var(--ease-out)" }} />
+        ) : (
+          <React.Fragment>
+            <span style={{ width: 38, height: 38, flex: "none", borderRadius: "var(--radius-sm)", display: "flex", alignItems: "center", justifyContent: "center", background: hov ? "var(--gradient-brand)" : "var(--ink-100)", color: hov ? "#fff" : "var(--ink-500)", fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14, transition: "all var(--duration-base) var(--ease-out)" }}>{initials(c.name)}</span>
+            <span style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 15, color: "var(--text-strong)", whiteSpace: "nowrap" }}>{c.name}</span>
+          </React.Fragment>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <React.Fragment>
+      <section id="portfolio" style={{ background: "var(--surface-page)", padding: "var(--section-gap) 0" }}>
+        <div style={wrap}>
+          <SectionHeading align="center" eyebrow={CL.worksHead.eyebrow[lang]} title={CL.worksHead.title[lang]} description={CL.worksHead.sub[lang]} />
+          <div className="noble-works-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, marginTop: 48 }}>
+            {CL.works.map((w, i) => <ProjectCard key={i} w={w} />)}
+          </div>
+
+          {/* Clients / logo wall */}
+          <div style={{ marginTop: "var(--section-gap)" }}>
+            <SectionHeading align="center" eyebrow={CL.eyebrow[lang]} title={CL.title[lang]} description={CL.sub[lang]} />
+            <div style={{ display: "flex", flexDirection: "column", gap: 34, marginTop: 48 }}>
+            {groups.map((g) => {
+              const items = CL.items.filter((c) => c.sector === g.key);
+              if (!items.length) return null;
+              return (
+                <div key={g.key}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 18 }}>
+                    <span style={{ fontFamily: "var(--font-display)", textTransform: "uppercase", letterSpacing: "var(--tracking-eyebrow)", fontSize: "var(--text-2xs)", fontWeight: 600, color: "var(--text-muted)" }}>{g.label[lang]}</span>
+                    <span style={{ flex: 1, height: 1, background: "var(--border-default)" }}></span>
+                    <Badge tone="neutral" size="sm">{items.length}</Badge>
+                  </div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 14 }}>
+                    {items.map((c, i) => <Tile key={i} c={c} />)}
+                  </div>
+                </div>
+              );
+            })}
+            </div>
+          </div>
+          <p style={{ textAlign: "center", marginTop: 36, fontSize: "var(--text-sm)", color: "var(--text-faint)" }}>
+            {lang === "th" ? "โลโก้และชื่อเป็นเพียงตัวอย่าง — เพิ่ม/แก้ลูกค้าจริงได้ที่ปุ่ม “จัดการเนื้อหา”" : "Names & logos are placeholders — add your real clients via “Manage content”."}
+          </p>
+        </div>
+      </section>
+
+      {/* Closing CTA band */}
+      <section style={{ background: "var(--surface-card)", padding: "var(--section-gap) 0" }}>
+        <div style={wrap}>
+          <div style={{ position: "relative", overflow: "hidden", borderRadius: "var(--radius-2xl)", background: "var(--gradient-brand)", padding: "clamp(2.5rem,5vw,4rem)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 32, flexWrap: "wrap", boxShadow: "var(--shadow-xl)" }}>
+            <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)", backgroundSize: "40px 40px", maskImage: "radial-gradient(70% 100% at 100% 50%, #000, transparent)" }}></div>
+            <div style={{ position: "relative", maxWidth: 620 }}>
+              <h2 style={{ margin: "0 0 12px", fontFamily: "var(--font-display)", fontSize: "var(--text-display-lg)", fontWeight: 700, lineHeight: 1.15, color: "#fff", letterSpacing: "-0.02em" }}>{C.ctaSection.title[lang]}</h2>
+              <p style={{ margin: 0, fontSize: "var(--text-lg)", color: "var(--blue-100)", lineHeight: 1.6 }}>{C.ctaSection.sub[lang]}</p>
+            </div>
+            <div style={{ position: "relative" }}>
+              <Button size="lg" onClick={() => go("contact")} style={{ background: "#fff", color: "var(--primary)", boxShadow: "var(--shadow-lg)" }} rightIcon={React.createElement(window.NobleIco, { n: "arrow-right", s: 18 })}>
+                {lang === "th" ? "ติดต่อเราวันนี้" : "Contact us today"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </React.Fragment>
+  );
+}
+window.NobleClients = NobleClients;
+</script>
+
+<!-- ==================== Contact + Footer ==================== -->
+<script type="text/babel" data-presets="react">
+// The Noble — Contact section with working (fake) form + Footer
+function NobleContact({ lang, data }) {
+  const { SectionHeading, Input, Button, Badge } = window.TheNobleDesignSystem_288042;
+  const CT = data.contact;
+  const Ico = ({ n, s = 18 }) => React.createElement(window.NobleIco, { n, s });
+  const [sent, setSent] = React.useState(false);
+  const t = (th, en) => (lang === "th" ? th : en);
+
+  const info = [
+    { n: "map-pin", k: t("ที่อยู่", "Address"), v: CT.addr },
+    { n: "phone", k: t("โทรศัพท์", "Phone"), v: CT.phone },
+    { n: "mail", k: "Email", v: CT.email },
+    { n: "message-circle", k: "LINE", v: CT.line },
+  ];
+
+  return (
+    <section id="contact" style={{ background: "var(--surface-card)", padding: "var(--section-gap) 0", borderTop: "1px solid var(--border-subtle)" }}>
+      <div className="noble-contact-grid" style={{ maxWidth: "var(--container-max)", margin: "0 auto", padding: "0 var(--container-pad)", display: "grid", gridTemplateColumns: "1fr 1.1fr", gap: 56, alignItems: "start" }}>
+        <div>
+          <SectionHeading eyebrow={CT.eyebrow[lang]} title={CT.title[lang]} description={t("ปรึกษาทีมงานได้ฟรี เราจะติดต่อกลับภายใน 24 ชั่วโมง", "Free consultation — we reply within 24 hours.")} />
+          <div style={{ display: "flex", flexDirection: "column", gap: 18, marginTop: 32 }}>
+            {info.map((x, i) => (
+              <div key={i} style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
+                <div style={{ width: 42, height: 42, flex: "none", borderRadius: "var(--radius-md)", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--blue-50)", color: "var(--primary)" }}><Ico n={x.n} /></div>
+                <div>
+                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-faint)", marginBottom: 3 }}>{x.k}</div>
+                  <div style={{ fontSize: 15, color: "var(--text-strong)", fontWeight: 500, lineHeight: 1.45 }}>{x.v}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ background: "var(--surface-page)", borderRadius: "var(--radius-xl)", padding: "clamp(1.5rem,3vw,2.5rem)", boxShadow: "var(--shadow-sm), var(--ring-hairline)" }}>
+          {sent ? (
+            <div style={{ textAlign: "center", padding: "40px 20px" }}>
+              <div style={{ width: 64, height: 64, margin: "0 auto 18px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--success-100)", color: "var(--success-600)" }}><Ico n="check" s={30} /></div>
+              <h3 style={{ margin: "0 0 8px", fontFamily: "var(--font-display)", fontSize: 22, color: "var(--text-strong)" }}>{t("ส่งข้อมูลเรียบร้อย", "Message sent")}</h3>
+              <p style={{ margin: "0 0 20px", color: "var(--text-muted)" }}>{t("ทีมงานจะติดต่อกลับโดยเร็วที่สุด", "Our team will be in touch shortly.")}</p>
+              <Button variant="secondary" onClick={() => setSent(false)}>{t("ส่งอีกครั้ง", "Send another")}</Button>
+            </div>
+          ) : (
+            <form onSubmit={(e) => { e.preventDefault(); setSent(true); }} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <Badge tone="brand" dot>{t("ขอใบเสนอราคา", "Request a quote")}</Badge>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+                <Input label={t("ชื่อ-นามสกุล", "Full name")} placeholder={t("ชื่อของคุณ", "Your name")} leftIcon={<Ico n="user" s={16} />} required />
+                <Input label={t("บริษัท", "Company")} placeholder={t("ชื่อบริษัท", "Company name")} leftIcon={<Ico n="building-2" s={16} />} />
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+                <Input label="Email" type="email" placeholder="you@company.com" leftIcon={<Ico n="mail" s={16} />} required />
+                <Input label={t("เบอร์โทร", "Phone")} placeholder="08x xxx xxxx" leftIcon={<Ico n="phone" s={16} />} />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <label style={{ fontFamily: "var(--font-body)", fontSize: 14, fontWeight: 600, color: "var(--text-strong)" }}>{t("บริการที่สนใจ", "Service of interest")}</label>
+                <select style={{ height: "var(--control-h-md)", padding: "0 14px", borderRadius: "var(--radius-sm)", border: "1.5px solid var(--border-default)", background: "#fff", fontFamily: "var(--font-body)", fontSize: 16, color: "var(--text-strong)" }}>
+                  {data.services.map((s, i) => <option key={i}>{s.title[lang]}</option>)}
+                </select>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <label style={{ fontFamily: "var(--font-body)", fontSize: 14, fontWeight: 600, color: "var(--text-strong)" }}>{t("รายละเอียด", "Message")}</label>
+                <textarea rows={3} placeholder={t("เล่าเกี่ยวกับโครงการของคุณ...", "Tell us about your project...")} style={{ padding: "12px 14px", borderRadius: "var(--radius-sm)", border: "1.5px solid var(--border-default)", background: "#fff", fontFamily: "var(--font-body)", fontSize: 16, color: "var(--text-strong)", resize: "vertical" }}></textarea>
+              </div>
+              <Button type="submit" size="lg" fullWidth rightIcon={<Ico n="send" s={16} />}>{t("ส่งคำขอ", "Send request")}</Button>
+            </form>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function NobleFooter({ lang, data }) {
+  const C = window.NobleContent;
+  const t = (th, en) => (lang === "th" ? th : en);
+  const cols = [
+    { h: t("บริการ", "Services"), items: data.services.map(s => s.title[lang]) },
+    { h: t("บริษัท", "Company"), items: C.nav[lang] },
+  ];
+  return (
+    <footer style={{ background: "var(--ink-900)", color: "var(--ink-300)", paddingTop: 56 }}>
+      <div className="noble-footer-grid" style={{ maxWidth: "var(--container-wide)", margin: "0 auto", padding: "0 var(--container-pad)", display: "grid", gridTemplateColumns: "1.4fr 1fr 1fr", gap: 40, paddingBottom: 40 }}>
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+            <img src="./assets/logo-noble-mark.png" alt="The Noble" style={{ height: 40 }} />
+            <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 20, letterSpacing: "0.06em", color: "#fff" }}>{data.brand.name}</span>
+          </div>
+          <p style={{ margin: "0 0 18px", fontSize: 14, lineHeight: 1.65, maxWidth: 320 }}>{t("ผู้ให้บริการระบบไอทีครบวงจร (System Integration) ตั้งแต่วางระบบไปจนถึงดูแลบำรุงรักษา", "Full-service IT System Integration — from rollout to continuous maintenance.")}</p>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: 13, lineHeight: 1.8 }}>
+            <div>{data.contact.phone}</div>
+            <div>{data.contact.email}</div>
+          </div>
+        </div>
+        {cols.map((col, i) => (
+          <div key={i}>
+            <div style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 14, color: "#fff", marginBottom: 14, textTransform: "uppercase", letterSpacing: "0.06em" }}>{col.h}</div>
+            <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 9 }}>
+              {col.items.map((it, j) => <li key={j} style={{ fontSize: 14, cursor: "pointer" }}>{it}</li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
+        <div style={{ maxWidth: "var(--container-wide)", margin: "0 auto", padding: "20px var(--container-pad)", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 8, fontSize: 12.5, color: "var(--ink-400)" }}>
+          <span>© 2026 บริษัท เดอะ โนเบิล จำกัด · The Noble Co., Ltd.</span>
+          <span style={{ fontFamily: "var(--font-mono)" }}>{data.brand.tagline}</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+window.NobleContact = NobleContact;
+window.NobleFooter = NobleFooter;
+</script>
+
+<!-- ==================== CMS ==================== -->
+<script type="text/babel" data-presets="react">
+// The Noble — full content CMS. Edits brand, hero, services, stats,
+// clients/works, showcase and contact — text + images — persisted via NobleStore.
+// Leaf field components live at module scope so inputs keep focus across renders.
+
+function cmsDownscale(file, max, cb) {
+  if (!file) return;
+  const fr = new FileReader();
+  fr.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, max / Math.max(img.width, img.height));
+      const cv = document.createElement("canvas");
+      cv.width = Math.round(img.width * scale); cv.height = Math.round(img.height * scale);
+      cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+      cb(cv.toDataURL("image/jpeg", 0.82));
+    };
+    img.src = fr.result;
+  };
+  fr.readAsDataURL(file);
+}
+
+const cmsLabel = { fontFamily: "var(--font-mono)", fontSize: 10.5, textTransform: "uppercase", letterSpacing: ".07em", color: "var(--text-faint)", marginBottom: 5, display: "block" };
+const cmsBox = { width: "100%", padding: "9px 11px", borderRadius: "var(--radius-sm)", border: "1.5px solid var(--border-default)", fontFamily: "var(--font-body)", fontSize: 14, color: "var(--text-strong)", background: "#fff", boxSizing: "border-box" };
+
+function CmsField({ label, value, onChange, area, mono, placeholder }) {
+  return (
+    <label style={{ display: "block", marginBottom: 12 }}>
+      {label && <span style={cmsLabel}>{label}</span>}
+      {area ? (
+        <textarea value={value || ""} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} rows={area === true ? 3 : area} style={{ ...cmsBox, resize: "vertical", lineHeight: 1.5 }} />
+      ) : (
+        <input value={value || ""} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} style={{ ...cmsBox, fontFamily: mono ? "var(--font-mono)" : "var(--font-body)" }} />
+      )}
+    </label>
+  );
+}
+
+function CmsImageField({ label, value, onChange, P, lang }) {
+  const [mode, setMode] = React.useState(null);
+  const [url, setUrl] = React.useState("");
+  const fileRef = React.useRef(null);
+  const t = (th, en) => (lang === "th" ? th : en);
+  const btn = { border: "1px solid var(--border-default)", background: "#fff", borderRadius: "var(--radius-pill)", padding: "5px 11px", cursor: "pointer", fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 12, color: "var(--primary)", display: "inline-flex", alignItems: "center", gap: 5 };
+  const I = ({ n }) => React.createElement(window.NobleIco, { n, s: 12 });
+  return (
+    <div style={{ marginBottom: 12 }}>
+      {label && <span style={cmsLabel}>{label}</span>}
+      <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+        <div style={{ width: 70, height: 50, flex: "none", borderRadius: "var(--radius-sm)", background: value ? "#fff" : "var(--ink-100)", boxShadow: "var(--ring-hairline)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+          {value ? <img src={value} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }} /> : <I n="image" />}
+        </div>
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+          <button style={btn} onClick={() => setMode(m => m === "lib" ? null : "lib")}><I n="grid-3x3" />{t("คลัง", "Library")}</button>
+          <button style={btn} onClick={() => setMode(m => m === "url" ? null : "url")}><I n="link" />URL</button>
+          <button style={btn} onClick={() => fileRef.current && fileRef.current.click()}><I n="upload" />{t("อัปโหลด", "Upload")}</button>
+          {value && <button style={{ ...btn, color: "var(--text-muted)" }} onClick={() => onChange("")}><I n="x" />{t("ลบ", "Clear")}</button>}
+          <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={(e) => { cmsDownscale(e.target.files[0], 900, onChange); e.target.value = ""; }} />
+        </div>
+      </div>
+      {mode === "lib" && (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 5, marginTop: 8 }}>
+          {P.library.map((lib) => (
+            <button key={lib.key} title={lib.label} onClick={() => { onChange(lib.url); setMode(null); }} style={{ padding: 0, border: value === lib.url ? "2px solid var(--primary)" : "1px solid var(--border-subtle)", borderRadius: "var(--radius-sm)", overflow: "hidden", cursor: "pointer", aspectRatio: "4/3" }}>
+              <img src={lib.thumb} alt={lib.label} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+            </button>
+          ))}
+        </div>
+      )}
+      {mode === "url" && (
+        <div style={{ display: "flex", gap: 6, marginTop: 8 }}>
+          <input value={url} onChange={(e) => setUrl(e.target.value)} placeholder={t("วางลิงก์รูป (URL)", "Paste image URL")} style={cmsBox} />
+          <button style={{ ...btn, padding: "0 14px" }} onClick={() => { if (url.trim()) { onChange(url.trim()); setUrl(""); setMode(null); } }}>{t("ใช้", "Use")}</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CmsCard({ children, onRemove, removeLabel }) {
+  return (
+    <div style={{ border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-md)", padding: 12, marginBottom: 10, background: "var(--surface-card)", position: "relative" }}>
+      {onRemove && (
+        <button onClick={onRemove} title={removeLabel} style={{ position: "absolute", top: 8, right: 8, width: 26, height: 26, border: "none", borderRadius: "var(--radius-sm)", background: "var(--red-50)", color: "var(--accent)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          {React.createElement(window.NobleIco, { n: "trash-2", s: 13 })}
+        </button>
+      )}
+      {children}
+    </div>
+  );
+}
+
+function NobleCMS({ lang, data, onChange }) {
+  const { Button, Badge } = window.TheNobleDesignSystem_288042;
+  const P = window.NoblePhotos;
+  const S = window.NobleStore;
+  const Ico = ({ n, s = 16 }) => React.createElement(window.NobleIco, { n, s });
+  const [open, setOpen] = React.useState(false);
+  const [tab, setTab] = React.useState("hero");
+  const t = (th, en) => (lang === "th" ? th : en);
+  const edit = (fn) => { const d = S.clone(data); fn(d); onChange(d); };
+  const img = (label, value, set) => <CmsImageField label={label} value={value} onChange={set} P={P} lang={lang} />;
+
+  const tabs = [
+    ["brand", t("แบรนด์", "Brand"), "badge-check"],
+    ["hero", t("ฮีโร่", "Hero"), "panel-top"],
+    ["services", t("บริการ", "Services"), "layout-grid"],
+    ["stats", t("สถิติ", "Stats"), "bar-chart-3"],
+    ["clients", t("ลูกค้า", "Clients"), "building-2"],
+    ["works", t("ผลงาน", "Works"), "briefcase"],
+    ["showcase", t("ผลงานเด่น", "Showcase"), "image"],
+    ["contact", t("ติดต่อ", "Contact"), "phone"],
+  ];
+
+  const sectorOpts = [["gov", t("ภาครัฐ", "Public")], ["private", t("ภาคเอกชน", "Private")], ["partner", t("พันธมิตร", "Partner")]];
+
+  const panel = {
+    position: "fixed", top: 0, right: 0, bottom: 0, width: 430, maxWidth: "94vw", zIndex: 95,
+    background: "var(--surface-page)", boxShadow: "var(--shadow-xl)", display: "flex", flexDirection: "column",
+    transform: open ? "translateX(0)" : "translateX(105%)", transition: "transform var(--duration-slow) var(--ease-out)",
+  };
+
+  return (
+    <React.Fragment>
+      <button onClick={() => setOpen(o => !o)} title={t("เครื่องมือสำหรับแก้ไขตัวอย่าง", "Demo editing tool")} style={{ position: "fixed", left: 18, bottom: 18, zIndex: 96, display: "flex", alignItems: "center", gap: 8, padding: "11px 17px", border: "none", cursor: "pointer", borderRadius: "var(--radius-pill)", background: "var(--ink-900)", color: "#fff", fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 14, boxShadow: "var(--shadow-lg)" }}>
+        <Ico n={open ? "x" : "sliders-horizontal"} s={17} />{t("จัดการเนื้อหา", "Manage content")}
+      </button>
+      {open && <div onClick={() => setOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 94, background: "rgba(11,18,32,0.35)" }}></div>}
+
+      <aside style={panel}>
+        <div style={{ padding: "18px 20px", borderBottom: "1px solid var(--border-subtle)", background: "var(--surface-card)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Badge tone="brand" dot>CMS</Badge>
+            <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 17, color: "var(--text-strong)" }}>{t("จัดการเนื้อหาเว็บไซต์", "Website content")}</span>
+          </div>
+          <button onClick={() => setOpen(false)} style={{ border: "none", background: "var(--ink-100)", borderRadius: "var(--radius-sm)", width: 32, height: 32, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-body)" }}><Ico n="x" /></button>
+        </div>
+
+        {/* tabs */}
+        <div style={{ display: "flex", gap: 6, padding: "10px 14px", overflowX: "auto", background: "var(--surface-card)", borderBottom: "1px solid var(--border-subtle)" }}>
+          {tabs.map(([k, label, icon]) => (
+            <button key={k} onClick={() => setTab(k)} style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "7px 12px", border: "none", cursor: "pointer", borderRadius: "var(--radius-pill)", whiteSpace: "nowrap", fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 12.5, background: tab === k ? "var(--primary)" : "var(--ink-100)", color: tab === k ? "#fff" : "var(--text-muted)" }}>
+              <Ico n={icon} s={13} />{label}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ flex: 1, overflowY: "auto", padding: "16px 18px" }}>
+          <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 14, display: "flex", alignItems: "center", gap: 6 }}>
+            <Ico n="languages" s={13} /> {t("กำลังแก้ภาษา:", "Editing language:")} <b style={{ color: "var(--primary)", textTransform: "uppercase" }}>{lang}</b> · {t("สลับ TH/EN ที่หัวเว็บ", "switch TH/EN in the header")}
+          </div>
+
+          {tab === "brand" && (
+            <React.Fragment>
+              <CmsField label={t("ชื่อแบรนด์", "Brand name")} value={data.brand.name} onChange={(v) => edit(d => d.brand.name = v)} />
+              <CmsField label={t("สโลแกน", "Tagline")} value={data.brand.tagline} onChange={(v) => edit(d => d.brand.tagline = v)} />
+            </React.Fragment>
+          )}
+
+          {tab === "hero" && (
+            <React.Fragment>
+              <CmsField label={t("ป้ายเล็ก (eyebrow)", "Eyebrow")} value={data.hero.eyebrow} onChange={(v) => edit(d => d.hero.eyebrow = v)} />
+              <CmsField label={t("หัวข้อใหญ่ (ขึ้นบรรทัดได้)", "Headline (line breaks ok)")} value={data.hero.title[lang]} onChange={(v) => edit(d => d.hero.title[lang] = v)} area={2} />
+              <CmsField label={t("คำอธิบาย", "Subtitle")} value={data.hero.sub[lang]} onChange={(v) => edit(d => d.hero.sub[lang] = v)} area />
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                <CmsField label={t("ปุ่มหลัก", "Primary button")} value={data.hero.cta1[lang]} onChange={(v) => edit(d => d.hero.cta1[lang] = v)} />
+                <CmsField label={t("ปุ่มรอง", "Secondary button")} value={data.hero.cta2[lang]} onChange={(v) => edit(d => d.hero.cta2[lang] = v)} />
+              </div>
+              {img(t("ภาพพื้นหลังฮีโร่", "Hero background"), data.hero.image, (v) => edit(d => d.hero.image = v))}
+            </React.Fragment>
+          )}
+
+          {tab === "services" && (
+            <React.Fragment>
+              <CmsField label={t("ป้ายเล็ก", "Eyebrow")} value={data.servicesHead.eyebrow[lang]} onChange={(v) => edit(d => d.servicesHead.eyebrow[lang] = v)} />
+              <CmsField label={t("หัวข้อ", "Title")} value={data.servicesHead.title[lang]} onChange={(v) => edit(d => d.servicesHead.title[lang] = v)} />
+              <CmsField label={t("คำโปรย", "Subtitle")} value={data.servicesHead.sub[lang]} onChange={(v) => edit(d => d.servicesHead.sub[lang] = v)} area />
+              <div style={{ ...cmsLabel, marginTop: 8 }}>{t("รายการบริการ", "Service items")}</div>
+              {data.services.map((s, i) => (
+                <CmsCard key={i} onRemove={data.services.length > 1 ? () => edit(d => d.services.splice(i, 1)) : null} removeLabel={t("ลบ", "Remove")}>
+                  <CmsField label={t("ชื่อบริการ", "Title")} value={s.title[lang]} onChange={(v) => edit(d => d.services[i].title[lang] = v)} />
+                  <CmsField label={t("คำอธิบาย", "Description")} value={s.desc[lang]} onChange={(v) => edit(d => d.services[i].desc[lang] = v)} area={2} />
+                  <CmsField label={t("ไอคอน (ชื่อ Lucide)", "Icon (Lucide name)")} value={s.icon} onChange={(v) => edit(d => d.services[i].icon = v)} mono />
+                  {img(t("รูปการ์ด", "Card image"), s.image, (v) => edit(d => d.services[i].image = v))}
+                </CmsCard>
+              ))}
+              <Button size="sm" variant="secondary" fullWidth leftIcon={React.createElement(window.NobleIco, { n: "plus", s: 15 })} onClick={() => edit(d => d.services.push({ icon: "box", title: { th: "บริการใหม่", en: "New service" }, desc: { th: "รายละเอียดบริการ", en: "Service description" }, image: P.url("circuit", 800) }))}>{t("เพิ่มบริการ", "Add service")}</Button>
+            </React.Fragment>
+          )}
+
+          {tab === "stats" && (
+            <React.Fragment>
+              {data.stats.map((s, i) => (
+                <CmsCard key={i} onRemove={() => edit(d => d.stats.splice(i, 1))} removeLabel={t("ลบ", "Remove")}>
+                  <div style={{ display: "grid", gridTemplateColumns: "0.8fr 1.2fr", gap: 10 }}>
+                    <CmsField label={t("ตัวเลข", "Value")} value={s.value} onChange={(v) => edit(d => d.stats[i].value = v)} mono />
+                    <CmsField label={t("ป้ายกำกับ", "Label")} value={s.label[lang]} onChange={(v) => edit(d => d.stats[i].label[lang] = v)} />
+                  </div>
+                </CmsCard>
+              ))}
+              <Button size="sm" variant="secondary" fullWidth leftIcon={React.createElement(window.NobleIco, { n: "plus", s: 15 })} onClick={() => edit(d => d.stats.push({ value: "0", label: { th: "ป้ายใหม่", en: "New stat" } }))}>{t("เพิ่มสถิติ", "Add stat")}</Button>
+            </React.Fragment>
+          )}
+
+          {tab === "clients" && (
+            <React.Fragment>
+              <CmsField label={t("ป้ายเล็ก", "Eyebrow")} value={data.clients.eyebrow[lang]} onChange={(v) => edit(d => d.clients.eyebrow[lang] = v)} />
+              <CmsField label={t("หัวข้อ", "Title")} value={data.clients.title[lang]} onChange={(v) => edit(d => d.clients.title[lang] = v)} />
+              <CmsField label={t("คำโปรย", "Subtitle")} value={data.clients.sub[lang]} onChange={(v) => edit(d => d.clients.sub[lang] = v)} area />
+              <div style={{ ...cmsLabel, marginTop: 8 }}>{t("รายชื่อลูกค้า / พันธมิตร", "Clients & partners")}</div>
+              {data.clients.items.map((c, i) => (
+                <CmsCard key={i} onRemove={() => edit(d => d.clients.items.splice(i, 1))} removeLabel={t("ลบ", "Remove")}>
+                  <CmsField label={t("ชื่อ", "Name")} value={c.name} onChange={(v) => edit(d => d.clients.items[i].name = v)} />
+                  <label style={{ display: "block", marginBottom: 12 }}>
+                    <span style={cmsLabel}>{t("ประเภท", "Group")}</span>
+                    <select value={c.sector} onChange={(e) => edit(d => d.clients.items[i].sector = e.target.value)} style={cmsBox}>
+                      {sectorOpts.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                    </select>
+                  </label>
+                  {img(t("โลโก้ (ไม่ใส่ก็ได้)", "Logo (optional)"), c.logo, (v) => edit(d => d.clients.items[i].logo = v))}
+                </CmsCard>
+              ))}
+              <Button size="sm" variant="secondary" fullWidth leftIcon={React.createElement(window.NobleIco, { n: "plus", s: 15 })} onClick={() => edit(d => d.clients.items.push({ name: t("ลูกค้าใหม่", "New client"), sector: "private", logo: "" }))}>{t("เพิ่มลูกค้า", "Add client")}</Button>
+            </React.Fragment>
+          )}
+
+          {tab === "works" && (
+            <React.Fragment>
+              <CmsField label={t("ป้ายเล็ก", "Eyebrow")} value={data.clients.worksHead.eyebrow[lang]} onChange={(v) => edit(d => d.clients.worksHead.eyebrow[lang] = v)} />
+              <CmsField label={t("หัวข้อ", "Title")} value={data.clients.worksHead.title[lang]} onChange={(v) => edit(d => d.clients.worksHead.title[lang] = v)} />
+              <CmsField label={t("คำโปรย", "Subtitle")} value={data.clients.worksHead.sub[lang]} onChange={(v) => edit(d => d.clients.worksHead.sub[lang] = v)} area />
+              <div style={{ ...cmsLabel, marginTop: 8 }}>{t("รายการผลงาน", "Project items")}</div>
+              {data.clients.works.map((w, i) => (
+                <CmsCard key={i} onRemove={() => edit(d => d.clients.works.splice(i, 1))} removeLabel={t("ลบ", "Remove")}>
+                  <CmsField label={t("ชื่อโครงการ", "Title")} value={w.title[lang]} onChange={(v) => edit(d => d.clients.works[i].title[lang] = v)} />
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                    <CmsField label={t("หมวด/บริการ", "Category")} value={w.category[lang]} onChange={(v) => edit(d => d.clients.works[i].category[lang] = v)} />
+                    <CmsField label={t("สถานที่", "Location")} value={w.location[lang]} onChange={(v) => edit(d => d.clients.works[i].location[lang] = v)} />
+                  </div>
+                  {img(t("รูปโครงการ", "Project image"), w.image, (v) => edit(d => d.clients.works[i].image = v))}
+                </CmsCard>
+              ))}
+              <Button size="sm" variant="secondary" fullWidth leftIcon={React.createElement(window.NobleIco, { n: "plus", s: 15 })} onClick={() => edit(d => d.clients.works.push({ title: { th: "โครงการใหม่", en: "New project" }, category: { th: "บริการ", en: "Service" }, location: { th: "สถานที่", en: "Location" }, image: P.url("rackAisle", 800) }))}>{t("เพิ่มผลงาน", "Add project")}</Button>
+            </React.Fragment>
+          )}
+
+          {tab === "showcase" && (
+            <React.Fragment>
+              <CmsField label={t("ป้ายเล็ก", "Eyebrow")} value={data.showcase.eyebrow[lang]} onChange={(v) => edit(d => d.showcase.eyebrow[lang] = v)} />
+              <CmsField label={t("หัวข้อ", "Title")} value={data.showcase.title[lang]} onChange={(v) => edit(d => d.showcase.title[lang] = v)} />
+              <CmsField label={t("คำอธิบาย", "Description")} value={data.showcase.desc[lang]} onChange={(v) => edit(d => d.showcase.desc[lang] = v)} area />
+              {img(t("รูปหลัก", "Main image"), data.showcase.image1, (v) => edit(d => d.showcase.image1 = v))}
+              {img(t("รูปมุม", "Inset image"), data.showcase.image2, (v) => edit(d => d.showcase.image2 = v))}
+            </React.Fragment>
+          )}
+
+          {tab === "contact" && (
+            <React.Fragment>
+              <CmsField label={t("ป้ายเล็ก", "Eyebrow")} value={data.contact.eyebrow[lang]} onChange={(v) => edit(d => d.contact.eyebrow[lang] = v)} />
+              <CmsField label={t("หัวข้อ", "Title")} value={data.contact.title[lang]} onChange={(v) => edit(d => d.contact.title[lang] = v)} />
+              <CmsField label={t("ที่อยู่", "Address")} value={data.contact.addr} onChange={(v) => edit(d => d.contact.addr = v)} area={2} />
+              <CmsField label={t("โทรศัพท์", "Phone")} value={data.contact.phone} onChange={(v) => edit(d => d.contact.phone = v)} mono />
+              <CmsField label="Email" value={data.contact.email} onChange={(v) => edit(d => d.contact.email = v)} mono />
+              <CmsField label="LINE" value={data.contact.line} onChange={(v) => edit(d => d.contact.line = v)} mono />
+            </React.Fragment>
+          )}
+        </div>
+
+        <div style={{ padding: "12px 18px", borderTop: "1px solid var(--border-subtle)", background: "var(--surface-card)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span style={{ fontSize: 11.5, color: "var(--success-600)", display: "flex", alignItems: "center", gap: 5 }}><Ico n="check-circle-2" s={13} />{t("บันทึกอัตโนมัติ", "Saved automatically")}</span>
+          <Button size="sm" variant="ghost" leftIcon={React.createElement(window.NobleIco, { n: "rotate-ccw", s: 14 })} onClick={() => { if (confirm(t("รีเซ็ตเนื้อหาทั้งหมดเป็นค่าเริ่มต้น?", "Reset all content to defaults?"))) { S.reset(); onChange(S.defaults()); } }}>{t("รีเซ็ตทั้งหมด", "Reset all")}</Button>
+        </div>
+      </aside>
+    </React.Fragment>
+  );
+}
+window.NobleCMS = NobleCMS;
+</script>
+
+<!-- ==================== App ==================== -->
+<script type="text/babel" data-presets="react">
+function App() {
+  const [lang, setLang] = React.useState("th");
+  const [data, setData] = React.useState(() => window.NobleStore.load());
+  const update = (d) => { setData(d); window.NobleStore.save(d); };
+  const go = (id) => {
+    const el = document.getElementById(id);
+    if (el) window.scrollTo({ top: el.offsetTop - 60, behavior: "smooth" });
+  };
+  React.useEffect(() => {
+    if (window.lucide) { try { window.lucide.createIcons(); } catch (e) {} }
+    // Hide loading spinner once React has mounted
+    const loader = document.getElementById("noble-loading");
+    if (loader) { loader.classList.add("hidden"); setTimeout(() => { loader.style.display = "none"; }, 350); }
+  });
+  return (
+    <React.Fragment>
+      <window.NobleHeader lang={lang} setLang={setLang} go={go} data={data} />
+      <window.NobleHero lang={lang} go={go} data={data} />
+      <window.NobleSections lang={lang} go={go} data={data} />
+      <window.NobleClients lang={lang} go={go} data={data} />
+      <window.NobleContact lang={lang} data={data} />
+      <window.NobleFooter lang={lang} data={data} />
+      <window.NobleCMS lang={lang} data={data} onChange={update} />
+    </React.Fragment>
+  );
+}
+function mount() {
+  if (!window.NobleHeader || !window.NobleHero || !window.NobleSections || !window.NobleClients || !window.NobleContact || !window.NobleCMS || !window.NobleStore || !window.NoblePhotos || !window.TheNobleDesignSystem_288042) {
+    return setTimeout(mount, 40);
+  }
+  ReactDOM.createRoot(document.getElementById("app")).render(<App />);
+}
+mount();
+</script>
+</body>
+</html>

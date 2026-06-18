@@ -1,0 +1,87 @@
+/* The Noble — Color tokens
+   Brand: royal blue + signal red drawn from the master logo.
+   Cool slate neutrals give the system a precise, technical feel. */
+
+:root {
+  /* ---- Brand: Blue (primary) ---- */
+  --blue-950: #04244a;
+  --blue-900: #062f5e;
+  --blue-800: #073c78;
+  --blue-700: #0a51a1; /* THE NOBLE blue — canonical */
+  --blue-600: #0f5fbb;
+  --blue-500: #1a72d6;
+  --blue-400: #4690e6;
+  --blue-300: #84b5ef;
+  --blue-200: #bcd6f7;
+  --blue-100: #dcebfb;
+  --blue-50:  #eef5fe;
+
+  /* ---- Brand: Red (signal / accent) ---- */
+  --red-800: #9e1117;
+  --red-700: #c8161d;
+  --red-600: #ed1c24; /* THE NOBLE red — canonical */
+  --red-500: #f3434a;
+  --red-300: #f89a9e;
+  --red-100: #fbe0e1;
+  --red-50:  #fdf0f1;
+
+  /* ---- Neutrals: cool slate ---- */
+  --ink-900: #0b1220;
+  --ink-800: #141d2e;
+  --ink-700: #283449;
+  --ink-600: #45546e;
+  --ink-500: #64748b;
+  --ink-400: #8b99ad;
+  --ink-300: #b6c1d1;
+  --ink-200: #d8e0ea;
+  --ink-150: #e6ecf3;
+  --ink-100: #eff3f8;
+  --ink-50:  #f6f9fc;
+  --white:   #ffffff;
+
+  /* ---- Status ---- */
+  --success-600: #15935b;
+  --success-100: #d8f1e4;
+  --warning-600: #c9820a;
+  --warning-100: #fbeed0;
+  --danger-600:  #d22d2d;
+  --danger-100:  #fbe0e0;
+  --info-600:    #0f5fbb;
+  --info-100:    #dcebfb;
+
+  /* ================= Semantic aliases ================= */
+  --primary:        var(--blue-700);
+  --primary-hover:  var(--blue-800);
+  --primary-active: var(--blue-900);
+  --primary-soft:   var(--blue-50);
+  --primary-on:     var(--white);
+
+  --accent:         var(--red-600);
+  --accent-hover:   var(--red-700);
+  --accent-active:  var(--red-800);
+  --accent-soft:    var(--red-50);
+  --accent-on:      var(--white);
+
+  --text-strong:  var(--ink-900);
+  --text-body:    var(--ink-700);
+  --text-muted:   var(--ink-500);
+  --text-faint:   var(--ink-400);
+  --text-on-brand: var(--white);
+  --text-link:    var(--blue-700);
+
+  --surface-page:    var(--ink-50);
+  --surface-card:    var(--white);
+  --surface-sunken:  var(--ink-100);
+  --surface-inverse: var(--ink-900);
+  --surface-brand:   var(--blue-700);
+
+  --border-subtle:  var(--ink-150);
+  --border-default: var(--ink-200);
+  --border-strong:  var(--ink-300);
+  --border-focus:   var(--blue-500);
+
+  /* Signature gradient — "Glow together" */
+  --gradient-brand: linear-gradient(135deg, #0a51a1 0%, #1a72d6 100%); /* @kind color */
+  --gradient-glow:  radial-gradient(60% 80% at 50% 0%, rgba(26,114,214,0.20) 0%, rgba(26,114,214,0) 70%); /* @kind color */
+  --gradient-signal: linear-gradient(135deg, #ed1c24 0%, #f3434a 100%); /* @kind color */
+}
