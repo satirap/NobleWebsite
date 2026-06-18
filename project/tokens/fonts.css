@@ -1,0 +1,11 @@
+/* The Noble — Webfonts
+   Bilingual TH/EN brand. Families served from Google Fonts CDN.
+   - Anuphan ........ display / headings (modern geometric Thai+Latin)
+   - IBM Plex Sans Thai .. body / UI text (Thai + Latin)
+   - IBM Plex Mono ... technical specs, code, metrics
+
+   NOTE: Fonts load from the Google Fonts CDN. If you need self-hosted
+   binaries, download the woff2 files and replace this @import with local
+   @font-face rules. */
+
+@import url("https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");

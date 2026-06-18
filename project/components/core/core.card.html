@@ -1,0 +1,76 @@
+<!-- @dsCard group="Components" viewport="700x560" name="Buttons, Badges, Card, Input" subtitle="Core primitives — variants, sizes, states" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../../styles.css" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>
+  body { margin: 0; font-family: var(--font-body); background: var(--surface-page); color: var(--text-body); }
+  #root { padding: 28px; }
+  .group { margin-bottom: 26px; }
+  .lbl { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--text-faint); margin-bottom: 12px; }
+  .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { Button, Badge, Card, Input } = window.TheNobleDesignSystem_288042;
+const Ico = ({ n }) => <i data-lucide={n} style={{ width: 16, height: 16 }}></i>;
+
+function Demo() {
+  return (
+    <div>
+      <div className="group">
+        <div className="lbl">Buttons — variants</div>
+        <div className="row">
+          <Button variant="primary">Primary</Button>
+          <Button variant="secondary">Secondary</Button>
+          <Button variant="ghost">Ghost</Button>
+          <Button variant="danger">Danger</Button>
+          <Button variant="primary" disabled>Disabled</Button>
+        </div>
+      </div>
+      <div className="group">
+        <div className="lbl">Buttons — sizes & icons</div>
+        <div className="row">
+          <Button size="sm">Small</Button>
+          <Button size="md" rightIcon={<Ico n="arrow-right" />}>ดูบริการ</Button>
+          <Button size="lg" variant="primary" leftIcon={<Ico n="phone" />}>ติดต่อเรา</Button>
+        </div>
+      </div>
+      <div className="group">
+        <div className="lbl">Badges</div>
+        <div className="row">
+          <Badge tone="brand">System Integration</Badge>
+          <Badge tone="accent">ใหม่</Badge>
+          <Badge tone="success" dot>Online</Badge>
+          <Badge tone="warning">MA</Badge>
+          <Badge tone="neutral" variant="solid">Outsource</Badge>
+        </div>
+      </div>
+      <div className="group">
+        <div className="lbl">Card + Input</div>
+        <div className="row" style={{ alignItems: "stretch" }}>
+          <Card accent="blue" style={{ width: 240 }}>
+            <h3 style={{ margin: "0 0 6px", fontFamily: "var(--font-display)", fontSize: 18, color: "var(--text-strong)" }}>CCTV System</h3>
+            <p style={{ margin: 0, fontSize: 13, color: "var(--text-muted)" }}>IP Camera · NVR · DVR ครบวงจร</p>
+          </Card>
+          <div style={{ width: 260 }}>
+            <Input label="อีเมล" placeholder="you@company.com" leftIcon={<Ico n="mail" />} hint="ตอบกลับภายใน 24 ชม." />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<Demo />);
+setTimeout(() => window.lucide && window.lucide.createIcons(), 60);
+</script>
+</body>
+</html>

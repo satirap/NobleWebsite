@@ -1,0 +1,30 @@
+<!-- @dsCard group="Brand" viewport="700x230" name="Logo — The Noble Mark" subtitle="Master mark on light & dark; clear space" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../../styles.css" />
+<style>
+  body { margin: 0; font-family: var(--font-body); background: var(--surface-card); color: var(--text-body); }
+  .wrap { padding: 22px 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .tile { border-radius: var(--radius-lg); height: 150px; display: flex; align-items: center; justify-content: center; box-shadow: var(--ring-hairline); }
+  .tile img { height: 104px; }
+  .light { background: var(--white); }
+  .dark { background: var(--ink-900); position: relative; overflow: hidden; }
+  .dark::after { content:""; position:absolute; inset:0; background: var(--gradient-glow); }
+  .lab { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); margin-top: 8px; text-align: center; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div>
+      <div class="tile light"><img src="../../assets/logo-noble-mark.png" alt="The Noble logo" /></div>
+      <div class="lab">On white — preferred</div>
+    </div>
+    <div>
+      <div class="tile dark"><img src="../../assets/logo-noble-mark.png" alt="The Noble logo" style="position:relative" /></div>
+      <div class="lab">On ink-900 with glow</div>
+    </div>
+  </div>
+</body>
+</html>

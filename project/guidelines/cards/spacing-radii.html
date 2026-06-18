@@ -1,0 +1,27 @@
+<!-- @dsCard group="Spacing" viewport="700x170" name="Corner Radii" subtitle="From 4px chips to pill" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../../styles.css" />
+<style>
+  body { margin: 0; font-family: var(--font-body); background: var(--surface-card); color: var(--text-body); }
+  .wrap { padding: 22px 24px; display: flex; gap: 16px; align-items: flex-end; }
+  .col { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .box { width: 72px; height: 72px; background: var(--blue-50); border: 1.5px solid var(--blue-300); }
+  .k { font-family: var(--font-mono); font-size: 10px; color: var(--text-strong); font-weight: 600; }
+  .v { font-family: var(--font-mono); font-size: 9px; color: var(--text-muted); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="col"><div class="box" style="border-radius:var(--radius-xs)"></div><div class="k">xs</div><div class="v">4</div></div>
+    <div class="col"><div class="box" style="border-radius:var(--radius-sm)"></div><div class="k">sm</div><div class="v">8</div></div>
+    <div class="col"><div class="box" style="border-radius:var(--radius-md)"></div><div class="k">md</div><div class="v">12</div></div>
+    <div class="col"><div class="box" style="border-radius:var(--radius-lg)"></div><div class="k">lg</div><div class="v">16</div></div>
+    <div class="col"><div class="box" style="border-radius:var(--radius-xl)"></div><div class="k">xl</div><div class="v">24</div></div>
+    <div class="col"><div class="box" style="border-radius:var(--radius-2xl)"></div><div class="k">2xl</div><div class="v">32</div></div>
+    <div class="col"><div class="box" style="border-radius:var(--radius-pill)"></div><div class="k">pill</div><div class="v">999</div></div>
+  </div>
+</body>
+</html>

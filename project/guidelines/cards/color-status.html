@@ -1,0 +1,26 @@
+<!-- @dsCard group="Colors" viewport="700x170" name="Status & Semantic" subtitle="Success, warning, danger, info" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../../styles.css" />
+<style>
+  body { margin: 0; font-family: var(--font-body); background: var(--surface-card); color: var(--text-body); }
+  .wrap { padding: 22px 24px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .cell { border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--ring-hairline); }
+  .bar { height: 56px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 600; font-size: 13px; }
+  .foot { padding: 8px 10px; background: var(--surface-card); }
+  .foot .n { font-size: 12px; font-weight: 600; color: var(--text-strong); }
+  .foot .h { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); }
+  .chip { display: inline-block; margin-top: 4px; font-size: 10px; padding: 2px 7px; border-radius: var(--radius-pill); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="cell"><div class="bar" style="background:var(--success-600)">Success</div><div class="foot"><div class="n">Success</div><div class="h">--success-600</div><span class="chip" style="background:var(--success-100);color:var(--success-600)">soft 100</span></div></div>
+    <div class="cell"><div class="bar" style="background:var(--warning-600)">Warning</div><div class="foot"><div class="n">Warning</div><div class="h">--warning-600</div><span class="chip" style="background:var(--warning-100);color:var(--warning-600)">soft 100</span></div></div>
+    <div class="cell"><div class="bar" style="background:var(--danger-600)">Danger</div><div class="foot"><div class="n">Danger</div><div class="h">--danger-600</div><span class="chip" style="background:var(--danger-100);color:var(--danger-600)">soft 100</span></div></div>
+    <div class="cell"><div class="bar" style="background:var(--info-600)">Info</div><div class="foot"><div class="n">Info</div><div class="h">--info-600</div><span class="chip" style="background:var(--info-100);color:var(--info-600)">soft 100</span></div></div>
+  </div>
+</body>
+</html>

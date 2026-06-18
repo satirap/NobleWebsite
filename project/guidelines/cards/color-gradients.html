@@ -1,0 +1,32 @@
+<!-- @dsCard group="Colors" viewport="700x180" name="Brand Gradients & Glow" subtitle="Signature blue gradient + glow — Glow together" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../../styles.css" />
+<style>
+  body { margin: 0; font-family: var(--font-body); background: var(--surface-card); color: var(--text-body); }
+  .wrap { padding: 22px 24px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .tile { height: 96px; border-radius: var(--radius-lg); display: flex; align-items: flex-end; padding: 10px; box-sizing: border-box; color: #fff; font-family: var(--font-mono); font-size: 10px; }
+  .glow { background: var(--ink-900); position: relative; overflow: hidden; }
+  .glow::after { content: ""; position: absolute; inset: 0; background: var(--gradient-glow); }
+  .lab { margin-top: 8px; font-size: 11px; color: var(--text-muted); text-align: center; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div>
+      <div class="tile" style="background:var(--gradient-brand)">--gradient-brand</div>
+      <div class="lab">Primary surfaces, hero</div>
+    </div>
+    <div>
+      <div class="tile" style="background:var(--gradient-signal)">--gradient-signal</div>
+      <div class="lab">Emphasis accents only</div>
+    </div>
+    <div>
+      <div class="tile glow"><span style="position:relative">--gradient-glow</span></div>
+      <div class="lab">Radial glow on dark</div>
+    </div>
+  </div>
+</body>
+</html>
