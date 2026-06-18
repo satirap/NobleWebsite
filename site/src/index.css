@@ -1,0 +1,29 @@
+@import './tokens/fonts.css';
+@import './tokens/colors.css';
+@import './tokens/typography.css';
+@import './tokens/spacing.css';
+@import './tokens/effects.css';
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; overflow-x: hidden; }
+body { font-family: var(--font-body); color: var(--text-body); background: var(--surface-card); }
+
+@media (max-width: 900px) {
+  .noble-hero-grid { grid-template-columns: 1fr !important; }
+  .noble-noc { display: none !important; }
+  .noble-nav { display: none !important; }
+  .noble-why-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .noble-showcase-grid { grid-template-columns: 1fr !important; }
+  .noble-contact-grid { grid-template-columns: 1fr !important; }
+  .noble-footer-grid { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 768px) {
+  .noble-services-grid { grid-template-columns: 1fr !important; }
+  .noble-works-grid { grid-template-columns: 1fr !important; }
+  .noble-why-grid { grid-template-columns: 1fr !important; }
+  .noble-showcase-inset { display: none !important; }
+}
+@media (min-width: 501px) and (max-width: 768px) {
+  .noble-services-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .noble-works-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
